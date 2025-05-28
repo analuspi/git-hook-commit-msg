@@ -1,0 +1,31 @@
+#!/bin/bash
+
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+# Don't run on merge or squash commits
+if [[ "$COMMIT_SOURCE" == "merge" || "$COMMIT_SOURCE" == "squash" ]]; then
+    exit 0
+fi
+
+# Read the first line of the commit message
+COMMIT_MSG=$(head -n 1 "$COMMIT_MSG_FILE")
+
+# Define regex for Conventional Commits
+PATTERN="^(feat|fix|docs|style|refactor|test|chore)(\([a-zA-Z0-9_-]+\))?: .+"
+
+if [[ ! "$COMMIT_MSG" =~ $PATTERN ]]; then
+    echo "⛔️ Commit message does not follow Conventional Commits format."
+    echo ""
+    echo "Correct format:"
+    echo "  <type>(<scope>): <description>"
+    echo ""
+    echo "Example:"
+    echo "  feat(parser): add ability to parse arrays"
+    echo ""
+    echo "Allowed types: feat, fix, docs, style, refactor, test, chore"
+    exit 1
+fi
+
+exit 0
